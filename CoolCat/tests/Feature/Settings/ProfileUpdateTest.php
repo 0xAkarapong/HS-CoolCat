@@ -1,51 +1,44 @@
 <?php
 
 use App\Models\User;
+use Livewire\Livewire;
 
 test('profile page is displayed', function () {
-    $user = User::factory()->create();
+    $this->actingAs($user = User::factory()->create());
 
-    $response = $this
-        ->actingAs($user)
-        ->get(route('profile.edit'));
-
-    $response->assertOk();
+    $this->get(route('profile.edit'))->assertOk();
 });
 
 test('profile information can be updated', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
-        ->patch(route('profile.update'), [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+    $this->actingAs($user);
 
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('profile.edit'));
+    $response = Livewire::test('pages::settings.profile')
+        ->set('name', 'Test User')
+        ->set('email', 'test@example.com')
+        ->call('updateProfileInformation');
+
+    $response->assertHasNoErrors();
 
     $user->refresh();
 
-    expect($user->name)->toBe('Test User');
-    expect($user->email)->toBe('test@example.com');
+    expect($user->name)->toEqual('Test User');
+    expect($user->email)->toEqual('test@example.com');
     expect($user->email_verified_at)->toBeNull();
 });
 
-test('email verification status is unchanged when the email address is unchanged', function () {
+test('email verification status is unchanged when email address is unchanged', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
-        ->patch(route('profile.update'), [
-            'name' => 'Test User',
-            'email' => $user->email,
-        ]);
+    $this->actingAs($user);
 
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('profile.edit'));
+    $response = Livewire::test('pages::settings.profile')
+        ->set('name', 'Test User')
+        ->set('email', $user->email)
+        ->call('updateProfileInformation');
+
+    $response->assertHasNoErrors();
 
     expect($user->refresh()->email_verified_at)->not->toBeNull();
 });
@@ -53,33 +46,30 @@ test('email verification status is unchanged when the email address is unchanged
 test('user can delete their account', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
-        ->delete(route('profile.destroy'), [
-            'password' => 'password',
-        ]);
+    $this->actingAs($user);
+
+    $response = Livewire::test('pages::settings.delete-user-form')
+        ->set('password', 'password')
+        ->call('deleteUser');
 
     $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('home'));
+        ->assertHasNoErrors()
+        ->assertRedirect('/');
 
-    $this->assertGuest();
     expect($user->fresh())->toBeNull();
+    expect(auth()->check())->toBeFalse();
 });
 
 test('correct password must be provided to delete account', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
-        ->from(route('profile.edit'))
-        ->delete(route('profile.destroy'), [
-            'password' => 'wrong-password',
-        ]);
+    $this->actingAs($user);
 
-    $response
-        ->assertSessionHasErrors('password')
-        ->assertRedirect(route('profile.edit'));
+    $response = Livewire::test('pages::settings.delete-user-form')
+        ->set('password', 'wrong-password')
+        ->call('deleteUser');
+
+    $response->assertHasErrors(['password']);
 
     expect($user->fresh())->not->toBeNull();
 });

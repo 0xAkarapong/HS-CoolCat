@@ -3,16 +3,13 @@
         "gemini"
     ],
     "guidelines": true,
-    "herd_mcp": true,
+    "herd_mcp": false,
     "mcp": true,
     "nightwatch_mcp": false,
-    "packages": [
-        "laravel/fortify"
-    ],
     "sail": false,
     "skills": [
-        "wayfinder-development",
-        "pest-testing",
-        "developing-with-fortify"
+        "fluxui-development",
+        "livewire-development",
+        "pest-testing"
     ]
 }

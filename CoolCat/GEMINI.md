@@ -10,11 +10,11 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
 - php - 8.4.18
-- inertiajs/inertia-laravel (INERTIA_LARAVEL) - v2
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0
-- laravel/wayfinder (WAYFINDER) - v0
+- livewire/flux (FLUXUI_FREE) - v2
+- livewire/livewire (LIVEWIRE) - v4
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
 - laravel/pail (PAIL) - v1
@@ -27,9 +27,9 @@ This application is a Laravel application and its main Laravel ecosystems packag
 
 This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
-- `wayfinder-development` — Activates whenever referencing backend routes in frontend components. Use when importing from @/actions or @/routes, calling Laravel routes from TypeScript, or working with Wayfinder route functions.
+- `fluxui-development` — Develops UIs with Flux UI Free components. Activates when creating buttons, forms, modals, inputs, dropdowns, checkboxes, or UI components; replacing HTML form elements with Flux; working with flux: components; or when the user mentions Flux, component library, UI components, form fields, or asks about available Flux components.
+- `livewire-development` — Develops reactive Livewire 4 components. Activates when creating, updating, or modifying Livewire components; working with wire:model, wire:click, wire:loading, or any wire: directives; adding real-time updates, loading states, or reactivity; debugging component behavior; writing Livewire tests; or when the user mentions Livewire, component, counter, or reactive UI.
 - `pest-testing` — Tests applications using the Pest 4 PHP framework. Activates when writing tests, creating unit or feature tests, adding assertions, testing Livewire components, browser testing, debugging test failures, working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion, coverage, or needs to verify functionality works.
-- `developing-with-fortify` — Laravel Fortify headless authentication backend development. Activate when implementing authentication features including login, registration, password reset, email verification, two-factor authentication (2FA/TOTP), profile updates, headless auth, authentication scaffolding, or auth guards in Laravel applications.
 
 ## Conventions
 
@@ -142,34 +142,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
 - Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test --compact` with a specific filename or filter.
 
-=== inertia-laravel/core rules ===
-
-# Inertia
-
-- Inertia creates fully client-side rendered SPAs without modern SPA complexity, leveraging existing server-side patterns.
-- Components live in `resources/js/pages` (unless specified in `vite.config.js`). Use `Inertia::render()` for server-side routing instead of Blade views.
-- ALWAYS use `search-docs` tool for version-specific Inertia documentation and updated code examples.
-
-# Inertia v2
-
-- Use all Inertia features from v1 and v2. Check the documentation before making changes to ensure the correct approach.
-- New features: deferred props, infinite scroll, merging props, polling, prefetching, once props, flash data.
-- When using deferred props, add an empty state with a pulsing or animated skeleton.
-
-=== inertia-laravel/v2 rules ===
-
-# Inertia
-
-- Inertia creates fully client-side rendered SPAs without modern SPA complexity, leveraging existing server-side patterns.
-- Components live in `resources/js/pages` (unless specified in `vite.config.js`). Use `Inertia::render()` for server-side routing instead of Blade views.
-- ALWAYS use `search-docs` tool for version-specific Inertia documentation and updated code examples.
-
-# Inertia v2
-
-- Use all Inertia features from v1 and v2. Check the documentation before making changes to ensure the correct approach.
-- New features: deferred props, infinite scrolling (merging props + `WhenVisible`), lazy loading on scroll, polling, prefetching.
-- When using deferred props, add an empty state with a pulsing or animated skeleton.
-
 === laravel/core rules ===
 
 # Do Things the Laravel Way
@@ -250,17 +222,22 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 - Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
 
-=== wayfinder/core rules ===
+=== fluxui-free/core rules ===
 
-# Laravel Wayfinder
+# Flux UI Free
 
-Wayfinder generates TypeScript functions for Laravel routes. Import from `@/actions/` (controllers) or `@/routes/` (named routes).
+- Flux UI is the official Livewire component library. This project uses the free edition, which includes all free components and variants but not Pro components.
+- Use `<flux:*>` components when available; they are the recommended way to build Livewire interfaces.
+- IMPORTANT: Activate `fluxui-development` when working with Flux UI components.
 
-- IMPORTANT: Activate `wayfinder-development` skill whenever referencing backend routes in frontend components.
-- Invokable Controllers: `import StorePost from '@/actions/.../StorePostController'; StorePost()`.
-- Parameter Binding: Detects route keys (`{post:slug}`) — `show({ slug: "my-post" })`.
-- Query Merging: `show(1, { mergeQuery: { page: 2, sort: null } })` merges with current URL, `null` removes params.
-- Inertia: Use `.form()` with `<Form>` component or `form.submit(store())` with useForm.
+=== livewire/core rules ===
+
+# Livewire
+
+- Livewire allows you to build dynamic, reactive interfaces using only PHP — no JavaScript required.
+- Instead of writing frontend code in JavaScript frameworks, you use Alpine.js to build the UI when client-side interactions are required.
+- State lives on the server; the UI reflects it. Validate and authorize in actions (they're like HTTP requests).
+- IMPORTANT: Activate `livewire-development` every time you're working with Livewire-related tasks.
 
 === pint/core rules ===
 
@@ -278,13 +255,5 @@ Wayfinder generates TypeScript functions for Laravel routes. Import from `@/acti
 - Do NOT delete tests without approval.
 - CRITICAL: ALWAYS use `search-docs` tool for version-specific Pest documentation and updated code examples.
 - IMPORTANT: Activate `pest-testing` every time you're working with a Pest or testing-related task.
-
-=== laravel/fortify rules ===
-
-# Laravel Fortify
-
-- Fortify is a headless authentication backend that provides authentication routes and controllers for Laravel applications.
-- IMPORTANT: Always use the `search-docs` tool for detailed Laravel Fortify patterns and documentation.
-- IMPORTANT: Activate `developing-with-fortify` skill when working with Fortify authentication features.
 
 </laravel-boost-guidelines>

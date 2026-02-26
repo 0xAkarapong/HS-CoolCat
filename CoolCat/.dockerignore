@@ -1,0 +1,50 @@
+# Dependencies (installed in Dockerfile)
+node_modules/
+vendor/
+
+# Built assets (built in Dockerfile)
+public/build/
+public/hot/
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# Storage (use volumes in production)
+storage/logs/*.log
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+
+# Bootstrap cache (regenerated at runtime by artisan optimize)
+bootstrap/cache/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Tests & dev tooling
+tests/
+phpunit.xml
+pint.json
+.phpunit.cache
+.phpunit.result.cache
+*.test
+
+# IDE / OS
+.vscode/
+.idea/
+.zed/
+.nova/
+.fleet/
+.DS_Store
+Thumbs.db
+
+# Docker files themselves (not needed in context)
+docker-compose*.yml
+
+# Docs
+README.md
+CHANGELOG.md

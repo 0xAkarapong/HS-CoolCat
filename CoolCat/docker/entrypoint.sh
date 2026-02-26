@@ -3,6 +3,17 @@ set -e
 
 cd /var/www/html
 
+# ── Ensure required directories exist (named volumes can wipe image contents) ──
+mkdir -p \
+    storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    database
+chown -R www-data:www-data storage bootstrap/cache database
+chmod -R 775 storage bootstrap/cache database
+
 # ── .env setup ──────────────────────────────────────────────
 if [ ! -f ".env" ]; then
     echo "→ Creating .env from .env.example"

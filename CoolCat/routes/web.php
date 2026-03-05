@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CatListingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -9,5 +10,13 @@ Route::get('/', function () {
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+
+// Cat Listings — owner actions (auth required, registered first so /create isn't swallowed by {listing})
+Route::middleware('auth')->group(function () {
+    Route::resource('listings', CatListingController::class)->except(['index', 'show']);
+});
+
+// Cat Listings — public browsing
+Route::resource('listings', CatListingController::class)->only(['index', 'show']);
 
 require __DIR__.'/settings.php';

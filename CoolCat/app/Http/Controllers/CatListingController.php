@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreCatListingRequest;
+use App\Http\Requests\UpdateCatListingRequest;
+use App\Models\CatBreed;
+use App\Models\CatListing;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+
+class CatListingController extends Controller
+{
+    public function index(): View
+    {
+        $listings = CatListing::query()
+            ->with(['user', 'breed'])
+            ->active()
+            ->when(request('search'), fn ($q, $search) => $q
+                ->where('name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+            )
+            ->when(request('breed_id'), fn ($q, $breed) => $q->where('breed_id', $breed))
+            ->when(request('type'), fn ($q, $type) => $q->where('type', $type))
+            ->when(request('province'), fn ($q, $province) => $q->where('province', $province))
+            ->when(request('min_price'), fn ($q, $min) => $q->where('price', '>=', $min))
+            ->when(request('max_price'), fn ($q, $max) => $q->where('price', '<=', $max))
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
+        $breeds = CatBreed::query()->orderBy('name')->get();
+
+        return view('listings.index', compact('listings', 'breeds'));
+    }
+
+    public function create(): View
+    {
+        $breeds = CatBreed::query()->orderBy('name')->get();
+
+        return view('listings.create', compact('breeds'));
+    }
+
+    public function store(StoreCatListingRequest $request): RedirectResponse
+    {
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('cat-images', 'public');
+        }
+
+        $listing = $request->user()->catListings()->create($data);
+
+        return redirect()->route('listings.show', $listing)
+            ->with('success', 'Your listing has been created.');
+    }
+
+    public function show(CatListing $listing): View
+    {
+        $listing->increment('views');
+        $listing->load(['user', 'breed', 'reviews.user']);
+
+        return view('listings.show', compact('listing'));
+    }
+
+    public function edit(CatListing $listing): View
+    {
+        $this->authorize('update', $listing);
+
+        $breeds = CatBreed::query()->orderBy('name')->get();
+
+        return view('listings.edit', compact('listing', 'breeds'));
+    }
+
+    public function update(UpdateCatListingRequest $request, CatListing $listing): RedirectResponse
+    {
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            if ($listing->image) {
+                Storage::disk('public')->delete($listing->image);
+            }
+            $data['image'] = $request->file('image')->store('cat-images', 'public');
+        }
+
+        $listing->update($data);
+
+        return redirect()->route('listings.show', $listing)
+            ->with('success', 'Your listing has been updated.');
+    }
+
+    public function destroy(CatListing $listing): RedirectResponse
+    {
+        $this->authorize('delete', $listing);
+
+        $listing->delete();
+
+        return redirect()->route('listings.index')
+            ->with('success', 'Your listing has been removed.');
+    }
+}

@@ -13,6 +13,29 @@
 
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->beforeEach(function () {
+        Illuminate\Support\Facades\Http::fake([
+            '*/auth/v1/signup*' => Illuminate\Support\Facades\Http::response([
+                'user' => ['id' => 'fake-supabase-uuid-1234']
+            ], 200),
+            '*/auth/v1/token*' => function ($request) {
+                if ($request['password'] === 'wrong-password') {
+                    return Illuminate\Support\Facades\Http::response([
+                        'error' => 'invalid_grant',
+                        'error_description' => 'Invalid login credentials'
+                    ], 400);
+                }
+                return Illuminate\Support\Facades\Http::response([
+                    'user' => ['id' => 'fake-supabase-uuid-1234']
+                ], 200);
+            },
+        ]);
+        
+        config([
+            'services.supabase.url' => 'https://mock.supabase.co',
+            'services.supabase.anon_key' => 'mock-anon-key',
+        ]);
+    })
     ->in('Feature');
 
 /*

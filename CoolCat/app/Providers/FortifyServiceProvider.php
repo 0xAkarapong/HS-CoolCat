@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -29,6 +31,41 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+
+        Fortify::authenticateUsing(function (Request $request) {
+            $supabaseUrl = config('services.supabase.url');
+            $supabaseAnonKey = config('services.supabase.anon_key');
+
+            if (! $supabaseUrl || ! $supabaseAnonKey) {
+                return null;
+            }
+
+            $response = Http::withHeaders([
+                'apikey' => $supabaseAnonKey,
+                'Authorization' => 'Bearer '.$supabaseAnonKey,
+            ])->post($supabaseUrl.'/auth/v1/token?grant_type=password', [
+                'email' => $request->email,
+                'password' => $request->password,
+            ]);
+
+            if ($response->successful()) {
+                $supabaseData = $response->json();
+                $supabaseUserId = $supabaseData['user']['id'] ?? null;
+
+                if ($supabaseUserId) {
+                    $user = User::where('email', $request->email)->first();
+
+                    // Automatically update the local proxy's supabase_id if missing.
+                    if ($user && empty($user->supabase_id)) {
+                        $user->update(['supabase_id' => $supabaseUserId]);
+                    }
+
+                    return $user;
+                }
+            }
+
+            return null;
+        });
     }
 
     /**

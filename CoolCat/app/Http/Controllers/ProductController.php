@@ -20,8 +20,8 @@ class ProductController extends Controller
             ->with(['user'])
             ->active()
             ->when(request('search'), fn ($q, $search) => $q
-                ->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
+                ->where('name', 'ilike', "%{$search}%")
+                ->orWhere('description', 'ilike', "%{$search}%")
             )
             ->when(request('category'), fn ($q, $category) => $q->category($category))
             ->when(request('in_stock'), fn ($q) => $q->inStock())

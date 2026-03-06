@@ -18,8 +18,8 @@ class CatListingController extends Controller
             ->with(['user', 'breed'])
             ->active()
             ->when(request('search'), fn ($q, $search) => $q
-                ->where('name', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
+                ->where('name', 'ilike', "%{$search}%")
+                ->orWhere('description', 'ilike', "%{$search}%")
             )
             ->when(request('breed_id'), fn ($q, $breed) => $q->where('breed_id', $breed))
             ->when(request('type'), fn ($q, $type) => $q->where('type', $type))

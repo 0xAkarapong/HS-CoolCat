@@ -19,14 +19,7 @@ class ProductController extends Controller
         $products = Product::query()
             ->with(['user'])
             ->active()
-            ->when(request('search'), fn ($q, $search) => $q
-                ->where('name', 'ilike', "%{$search}%")
-                ->orWhere('description', 'ilike', "%{$search}%")
-            )
-            ->when(request('category'), fn ($q, $category) => $q->category($category))
-            ->when(request('in_stock'), fn ($q) => $q->inStock())
-            ->when(request('min_price'), fn ($q, $min) => $q->where('price', '>=', $min))
-            ->when(request('max_price'), fn ($q, $max) => $q->where('price', '<=', $max))
+            ->filter(request()->all())
             ->latest()
             ->paginate(12)
             ->withQueryString();

@@ -17,15 +17,7 @@ class CatListingController extends Controller
         $listings = CatListing::query()
             ->with(['user', 'breed'])
             ->active()
-            ->when(request('search'), fn ($q, $search) => $q
-                ->where('name', 'ilike', "%{$search}%")
-                ->orWhere('description', 'ilike', "%{$search}%")
-            )
-            ->when(request('breed_id'), fn ($q, $breed) => $q->where('breed_id', $breed))
-            ->when(request('type'), fn ($q, $type) => $q->where('type', $type))
-            ->when(request('province'), fn ($q, $province) => $q->where('province', $province))
-            ->when(request('min_price'), fn ($q, $min) => $q->where('price', '>=', $min))
-            ->when(request('max_price'), fn ($q, $max) => $q->where('price', '<=', $max))
+            ->filter(request()->all())
             ->latest()
             ->paginate(12)
             ->withQueryString();

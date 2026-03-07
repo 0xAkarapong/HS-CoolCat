@@ -82,4 +82,19 @@ class CatListing extends Model
     {
         return $this->birthdate?->diffInMonths(now());
     }
+
+    public function scopeFilter(Builder $query, array $filters): Builder
+    {
+        return $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'ilike', "%{$search}%")
+                    ->orWhere('description', 'ilike', "%{$search}%");
+            });
+        })
+            ->when($filters['breed_id'] ?? null, fn ($q, $breed) => $q->where('breed_id', $breed))
+            ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
+            ->when($filters['province'] ?? null, fn ($q, $province) => $q->where('province', $province))
+            ->when($filters['min_price'] ?? null, fn ($q, $min) => $q->where('price', '>=', $min))
+            ->when($filters['max_price'] ?? null, fn ($q, $max) => $q->where('price', '<=', $max));
+    }
 }

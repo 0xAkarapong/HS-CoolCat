@@ -33,7 +33,7 @@ COPY --from=composer /app/vendor/livewire/flux/dist/flux.css ./vendor/livewire/f
 RUN bun run build
 
 # ============================================================
-# Stage 3 – Production image (PHP 8.4 FPM + Alpine)
+# Stage 3 – Production image (PHP 8.5 FPM + Alpine)
 # ============================================================
 FROM php:8.5-fpm-alpine AS production
 

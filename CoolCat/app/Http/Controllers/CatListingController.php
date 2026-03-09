@@ -8,6 +8,7 @@ use App\Models\CatBreed;
 use App\Models\CatListing;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class CatListingController extends Controller
@@ -22,14 +23,14 @@ class CatListingController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        $breeds = CatBreed::query()->orderBy('name')->get();
+        $breeds = Cache::rememberForever('cat_breeds', fn () => CatBreed::query()->orderBy('name')->get());
 
         return view('listings.index', compact('listings', 'breeds'));
     }
 
     public function create(): View
     {
-        $breeds = CatBreed::query()->orderBy('name')->get();
+        $breeds = Cache::rememberForever('cat_breeds', fn () => CatBreed::query()->orderBy('name')->get());
 
         return view('listings.create', compact('breeds'));
     }
@@ -60,7 +61,7 @@ class CatListingController extends Controller
     {
         $this->authorize('update', $listing);
 
-        $breeds = CatBreed::query()->orderBy('name')->get();
+        $breeds = Cache::rememberForever('cat_breeds', fn () => CatBreed::query()->orderBy('name')->get());
 
         return view('listings.edit', compact('listing', 'breeds'));
     }

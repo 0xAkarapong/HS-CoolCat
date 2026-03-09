@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $featuredListings = CatListing::active()->latest()->take(3)->get();
+        $featuredListings = CatListing::with('breed')->active()->latest()->take(3)->get();
         $featuredProducts = Product::active()->inStock()->latest()->take(4)->get();
 
         return view('welcome', compact('featuredListings', 'featuredProducts'));

@@ -11,7 +11,9 @@
         <flux:heading size="xl">Post a New Listing</flux:heading>
 
         <form method="POST" action="{{ route('listings.store') }}" enctype="multipart/form-data"
-            class="grid gap-6 lg:grid-cols-2">
+            class="grid gap-6 lg:grid-cols-2"
+            x-data="{ submitting: false }"
+            x-on:submit="if (submitting) { $event.preventDefault(); return } submitting = true">
             @csrf
 
             {{-- Cat Details --}}

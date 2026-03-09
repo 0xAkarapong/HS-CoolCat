@@ -10,7 +10,9 @@
         <flux:heading size="xl">Edit Listing</flux:heading>
 
         <form method="POST" action="{{ route('listings.update', $listing) }}" enctype="multipart/form-data"
-            class="grid gap-6 lg:grid-cols-2">
+            class="grid gap-6 lg:grid-cols-2"
+            x-data="{ submitting: false }"
+            x-on:submit="if (submitting) { $event.preventDefault(); return } submitting = true">
             @csrf
             @method('PUT')
 

@@ -33,7 +33,8 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropIndex(['province']);
             $table->dropIndex(['is_verified']);
-            $table->dropColumn(['username', 'role', 'phone', 'avatar', 'province', 'is_verified', 'deleted_at']);
+            $table->dropColumn(['username', 'role', 'phone', 'avatar', 'province', 'is_verified']);
+            $table->dropSoftDeletes();
         });
     }
 };

@@ -34,7 +34,7 @@ CoolCat is a premier community platform for connecting loving homes with feline 
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/0xAkarapong/coolcat.git
    cd HS-CoolCat/CoolCat
    ```
 

@@ -85,6 +85,10 @@ class ProductController extends Controller
     {
         $this->authorize('delete', $product);
 
+        if ($product->image) {
+            Storage::disk('supabase')->delete($product->image);
+        }
+
         $product->delete();
 
         return redirect()->route('products.index')

@@ -7,8 +7,8 @@ use App\Http\Requests\UpdateCatListingRequest;
 use App\Models\CatBreed;
 use App\Models\CatListing;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class CatListingController extends Controller
@@ -86,6 +86,10 @@ class CatListingController extends Controller
     public function destroy(CatListing $listing): RedirectResponse
     {
         $this->authorize('delete', $listing);
+
+        if ($listing->image) {
+            Storage::disk('supabase')->delete($listing->image);
+        }
 
         $listing->delete();
 

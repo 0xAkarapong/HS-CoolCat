@@ -19,7 +19,7 @@ class DashboardController extends Controller
         // Unread inquiries on user's listings
         $unreadInquiries = CatInquiry::whereHas('listing', function ($q) use ($user) {
             $q->where('user_id', $user->id);
-        })->where('status', 'open')->count();
+        })->where('status', 'pending')->count();
 
         // Recent Sales
         $recentSales = Order::with('user', 'items.product')

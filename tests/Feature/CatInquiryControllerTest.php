@@ -33,7 +33,9 @@ test('buyer cannot inquire on their own listing', function () {
     $listing = CatListing::factory()->create(['user_id' => $seller->id]);
 
     $this->actingAs($seller)
-        ->post(route('listings.inquiries.store', $listing))
+        ->post(route('listings.inquiries.store', $listing), [
+            'message' => 'Trying to inquire on my own listing.',
+        ])
         ->assertForbidden();
 });
 

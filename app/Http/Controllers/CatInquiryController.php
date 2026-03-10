@@ -41,8 +41,8 @@ class CatInquiryController extends Controller
 
         // Inquiries on the user's listings (as a seller)
         $receivedInquiries = CatInquiry::whereHas('listing', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
+            $query->where('user_id', $user->id);
+        })
             ->with(['listing', 'buyer'])
             ->latest()
             ->get();
@@ -89,9 +89,9 @@ class CatInquiryController extends Controller
      */
     public function show(CatInquiry $inquiry): View
     {
-        $this->authorize('view', $inquiry);
-
         $inquiry->load(['listing.user', 'buyer']);
+
+        $this->authorize('view', $inquiry);
 
         return view('inquiries.show', compact('inquiry'));
     }

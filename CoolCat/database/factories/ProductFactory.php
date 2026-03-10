@@ -25,14 +25,14 @@ class ProductFactory extends Factory
             'price' => fake()->randomFloat(2, 50, 5000),
             'stock' => fake()->numberBetween(0, 100),
             'image' => null,
-            'is_active' => true,
+            'is_active' => 'true',
         ];
     }
 
     public function inactive(): static
     {
         return $this->state(fn (array $attributes) => [
-            'is_active' => false,
+            'is_active' => 'false',
         ]);
     }
 

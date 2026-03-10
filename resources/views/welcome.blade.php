@@ -9,6 +9,7 @@
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @fluxAppearance
 </head>
 <body class="bg-white text-zinc-900 antialiased dark:bg-zinc-900 dark:text-zinc-100">
 

@@ -30,6 +30,7 @@ class User extends Authenticatable
         'avatar',
         'province',
         'is_verified',
+        'supabase_id',
     ];
 
     /**

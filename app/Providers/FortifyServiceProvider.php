@@ -55,8 +55,15 @@ class FortifyServiceProvider extends ServiceProvider
                 if ($supabaseUserId) {
                     $user = User::where('email', $request->email)->first();
 
-                    // Automatically update the local proxy's supabase_id if missing.
-                    if ($user && empty($user->supabase_id)) {
+                    if (! $user) {
+                        // Create the proxy user locally if they exist in Supabase but not locally.
+                        $user = User::create([
+                            'name' => $supabaseData['user']['user_metadata']['name'] ?? 'Supabase User',
+                            'email' => $request->email,
+                            'supabase_id' => $supabaseUserId,
+                        ]);
+                    } elseif (empty($user->supabase_id)) {
+                        // Automatically update the local proxy's supabase_id if missing.
                         $user->update(['supabase_id' => $supabaseUserId]);
                     }
 

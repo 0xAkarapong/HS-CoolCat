@@ -49,6 +49,15 @@ class CreateNewUser implements CreatesNewUsers
 
         if ($response->failed()) {
             $error = $response->json('msg') ?? $response->json('error_description') ?? __('Registration failed via Supabase.');
+
+            // If user already exists in Supabase but not locally, suggest logging in.
+            if ($response->status() === 422 && (str_contains($error, 'registered') || str_contains($error, 'already'))) {
+                $localUser = User::where('email', $input['email'])->first();
+                if (! $localUser) {
+                    $error = __('This email is already registered. Please log in to connect your account.');
+                }
+            }
+
             throw ValidationException::withMessages([
                 'email' => $error,
             ]);

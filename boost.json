@@ -10,6 +10,8 @@
     "skills": [
         "fluxui-development",
         "livewire-development",
-        "pest-testing"
+        "volt-development",
+        "pest-testing",
+        "tailwindcss-development"
     ]
 }
